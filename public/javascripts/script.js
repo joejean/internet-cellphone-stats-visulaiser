@@ -64,19 +64,19 @@ $(document).ready( function(){
       })();
 
        function getCountryCode(countryName){
-          //$.ajaxSetup();
+
           return $.getJSON(countryCodeUrl, {name: countryName});
       }
 
 
       function getInternetStats(data, textStatus, jqXHR){
-        //ajaxSetup();
+
         var internetUrl = "http://api.worldbank.org/countries/"+data[0].code+"/indicators/IT.NET.USER.P2?format=jsonP&prefix=?&date=2005:2013";
         return $.getJSON(internetUrl);
       }
 
       function getMobilephonesStats(data, textStatus, jqXHR){
-        //ajaxSetup();
+
         var cellPhoneUrl = "http://api.worldbank.org/countries/"+data[0].code+"/indicators/IT.CEL.SETS.P2?format=jsonP&prefix=?&date=2005:2013";
         return $.getJSON(cellPhoneUrl);
       }
@@ -104,7 +104,6 @@ $(document).ready( function(){
         ).then(function(country1InternetData, country1MobileData,country2InternetData, country2MobileData){
 
 
-          console.log('TEST Internet');
           var c1InternetData = country1InternetData[0][1];
           var c2InternetData = country2InternetData[0][1];
 
@@ -116,11 +115,6 @@ $(document).ready( function(){
             country2InternetArr.push(new Array(Number(c2InternetData[i].date), Number(c2InternetData[i].value)));
           }
 
-          /*$.each(, function(data){
-            console.log(data);
-          });*/
-
-          console.log('TEST Mobile');
 
           var c1CellData = country1MobileData[0][1];
           var c2CellData = country2MobileData[0][1];
@@ -147,6 +141,11 @@ $(document).ready( function(){
               legend: { position: "nw"},
               yaxis: {
                 min: 0
+              },
+
+              grid: {
+                hoverable: true,
+                clickable: true
               }
 
            }
@@ -154,11 +153,43 @@ $(document).ready( function(){
 
 
 
-          $.plot($("#netChart"), [{data:country1InternetArr,color:"#4BB827", label:country1},
+          var plot1 = $.plot($("#netChart"), [{data:country1InternetArr,color:"#4BB827", label:country1},
             {data:country2InternetArr, color:"#D87F1B",label:country2}], options );
 
-          $.plot($("#cellChart"), [{data:country1CellArr,color:"#4BB827", label:country1},
+          var plot2 = $.plot($("#cellChart"), [{data:country1CellArr,color:"#4BB827", label:country1},
             {data:country2CellArr, color:"#D87F1B", label:country2}], options);
+
+          $("#netChart").bind("plotclick", function(event, pos, item){
+
+            plot1.highlight(item.series, item.datapoint);
+          });
+
+          $("#netChart").bind("plothover", function(event, pos, item){
+            if (item) {
+                $("#tooltip").html(item.datapoint[1].toFixed())
+                              .css({top: item.pageY-25, left: item.pageX+10})
+                              .fadeIn(200);
+
+           } else{
+              $("#tooltip").hide();
+           }
+
+          });
+
+          $("#cellChart").bind("plothover", function(event, pos, item){
+
+             if (item) {
+
+                $("#tooltip").html(item.datapoint[1].toFixed())
+                              .css({top: item.pageY-25, left: item.pageX+10})
+                              .fadeIn(200);
+
+           } else{
+              $("#tooltip").hide();
+           }
+
+          });
+
 
 
 

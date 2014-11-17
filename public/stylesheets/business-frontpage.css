@@ -100,3 +100,12 @@ src: http://stackoverflow.com/questions/20198247/twitters-typeahead-js-suggestio
 .tt-suggestion p {
     margin: 0;
 }
+
+#tooltip{
+    position: absolute;
+    display: none;
+    border: 1px solid #fdd;
+    padding: 2px;
+    background-color: #9FDEFA;
+    opacity: 0.90
+}
